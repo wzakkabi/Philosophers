@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/12 22:42:13 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/17 18:52:39 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/19 03:53:34 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,14 @@ struct details_t
 {
 	int philo_number;
 	long int time;
-	int last_meal;
+	long int last_meal;
+	int meal;
+	struct philo_t *test;
 	pthread_mutex_t *fork;
+	int eat;
 };
+
+void	ft_eat(struct details_t *p);
 
 
 

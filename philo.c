@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 16:42:03 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/17 21:30:18 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/19 04:28:05 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,17 @@ long int ft_time_get()
 	return tm;
 }
 
+void ft_usleep(int t)
+{
+	long int aa = ft_time_get();
+	while(1)
+	{
+		if(ft_time_get() - aa >= t)
+			break;
+		usleep(60);
+	}
+}
+
 void full_the_format(int ac, char **av, struct philo_t *a)
 {
 	a->philo = atoi(av[1]);
@@ -40,12 +51,53 @@ void full_the_format(int ac, char **av, struct philo_t *a)
 		a->must_eat = 2147483647;
 }
 
+void	ft_eat(struct details_t *p)
+{
+	if(p->philo_number < p->test->philo)
+	{
+		pthread_mutex_lock(&p->fork[p->philo_number - 1]);
+		pthread_mutex_lock(&p->fork[p->philo_number]);
+		printf("%ld %d has taken a fork\n",ft_time_get() - p->time, p->philo_number);
+		p->last_meal = ft_time_get();
+		printf("%ld %d is eating\n",ft_time_get() - p->time, p->philo_number);
+		ft_usleep(p->test->eat);
+		pthread_mutex_unlock(&p->fork[p->philo_number - 1]);
+		pthread_mutex_unlock(&p->fork[p->philo_number]);
+		printf("%ld %d is sleeping\n", (ft_time_get() - p->time) , p->philo_number);
+		ft_usleep(p->test->sleep);
+	}
+	else
+	{
+		pthread_mutex_lock(&p->fork[p->philo_number - 1]);
+		pthread_mutex_lock(&p->fork[0]);
+		printf("%ld %d has taken a fork\n",ft_time_get() - p->time, p->philo_number);
+		p->last_meal = ft_time_get();
+		printf("%ld %d is eating\n",ft_time_get() - p->time, p->philo_number);
+		ft_usleep(p->test->eat);
+		pthread_mutex_unlock(&p->fork[p->philo_number - 1]);
+		pthread_mutex_unlock(&p->fork[0]);
+		printf("%ld %d is sleeping\n", (ft_time_get() - p->time) , p->philo_number);
+		ft_usleep(p->test->sleep);
+	}
+}
+
 void *how_I_live(void *pp)
 {
 	struct details_t *p = (struct details_t *)pp;
-
-	printf("time = %ld philo = %d\n", p->time, p->philo_number);
-
+	while(p->meal < p->test->must_eat)
+	{
+		// if(p->philo_number % 2 == 0 && p->eat == 0)
+		// {
+		// 	ft_eat(p);
+		// 	p->eat = 1;
+		// }
+		// else
+		// {
+			printf("%ld %d is thinking\n", (ft_time_get() - p->time) , p->philo_number);
+			ft_eat(p);
+		//}
+		p->meal++;
+	}
 	return (void *)p;
 }
 
@@ -69,26 +121,47 @@ void	philo(struct philo_t *a)
 	a->time = ft_time_get();
 	while(x < a->philo)
 	{
+		p[x].eat = 0;
 		p[x].philo_number = x + 1;
 		p[x].time = a->time;
 		p[x].fork = fork;
 		p[x].last_meal = 0;
-		if(pthread_create(&philo[x], NULL, how_I_live, (void *)&p[x]) != 0)
+		p[x].meal = 0;
+		p[x].test = a;
+		if(x % 2 == 0)
 		{
-			printf("Error pthread");
-			return ;
+			if(pthread_create(&philo[x], NULL, how_I_live, (void *)&p[x]) != 0)
+			{
+				printf("Error pthread");
+				return ;
+			}
 		}
 		x++;
 	}
 	x = 0;
 	while(x < a->philo)
 	{
-		if(pthread_join(philo[x], NULL)!= 0)
+		if(x % 2 == 1)
 		{
-			printf("Error join pthread");
-			return ;
+			if(pthread_create(&philo[x], NULL, how_I_live, (void *)&p[x]) != 0)
+			{
+				printf("Error pthread");
+				return ;
+			}
 		}
 		x++;
+	}
+	x = 0;
+	ft_usleep(a->die);
+	while(1)
+	{
+		if(ft_time_get() - p[x].last_meal > a->die)
+		{
+			printf("%ld %d died\n", (ft_time_get() - p[x].time),  p->philo_number);
+			return ;
+		}
+		if(x == a->philo)
+			x = 0;
 	}
 }
 
