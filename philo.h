@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/12 22:42:13 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/20 09:55:23 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/20 14:42:00 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ typedef struct s_philo
 	pthread_t		*tread;
 	pthread_mutex_t	*fork;
 	pthread_mutex_t *print;
+	long int		*last_meal;
+	int				*meal;
 	int *d;
 }philo_t;
 
@@ -43,8 +45,6 @@ typedef struct s_details
 	int				philo_number;
 	long int		time;
 	long int		prnt_time;
-	long int		last_meal;
-	int				meal;
 	philo_t			*test;
 	pthread_mutex_t	*fork;
 	int				eat;
