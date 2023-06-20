@@ -4,10 +4,10 @@ SRC = philo.c
 
 OBJ = $(SRC:.c=.o)
 
-FLAGS = -Wall -Wextra -Werror 
+FLAGS = -Wall -Wextra -Werror  #-g -fsanitizer=thread
 
 all : $(NAME)
-	./philo 5 410 200 200
+	
 $(NAME) : $(OBJ)
 
 %.o : %.c
