@@ -4,12 +4,12 @@ SRC = philo.c
 
 OBJ = $(SRC:.c=.o)
 
-FLAGS = -Wall -Wextra -Werror  -g -fsanitize=thread
+FLAGS = -Wall -Wextra -Werror
 
 all : $(NAME)
 
 $(NAME) : $(OBJ)
-	gcc $(FLAGS)  $< -o philo
+	gcc $(FLAGS)  $< -o philo -g -fsanitize=thread
 %.o : %.c
 	gcc $(FLAGS) -c $<
 

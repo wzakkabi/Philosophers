@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/12 22:42:13 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/20 14:42:00 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/21 20:06:31 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,12 @@ typedef struct s_philo
 	int				must_eat;
 	int				die_or_not;
 	long int		time;
+	long int		*last_meal;
 	details_t		*dtls;
 	pthread_t		*tread;
 	pthread_mutex_t	*fork;
 	pthread_mutex_t *print;
-	long int		*last_meal;
 	int				*meal;
-	int *d;
 }philo_t;
 
 typedef struct s_details
@@ -47,8 +46,6 @@ typedef struct s_details
 	long int		prnt_time;
 	philo_t			*test;
 	pthread_mutex_t	*fork;
-	int				eat;
-	pthread_mutex_t *print;
 	int *d;
 }details_t;
 

@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 16:42:03 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/20 14:56:59 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/21 20:12:32 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,17 +53,15 @@ void full_the_format(int ac, char **av, philo_t *a)
 
 void x_print(char *s, details_t *p, int i)
 {
-	if(p->d[0] == 1)
+	//printf("here\n");
+	pthread_mutex_lock(&p->test->print[0]);
+	if(i == 1)
 	{
-		pthread_mutex_lock(&p->print[0]);
-		if(i == 1)
-		{
-			p->test->last_meal[p->philo_number - 1] = ft_time_get();
-			p->test->meal[p->philo_number - 1]++;
-		}
-		printf("%ld %d %s\n", (ft_time_get() - p->time), p->philo_number, s);
-		pthread_mutex_unlock(&p->print[0]);
+		p->test->meal[p->philo_number - 1] += 1;
+		p->test->last_meal[p->philo_number - 1] = ft_time_get();
 	}
+	printf("%ld %d %s\n", (ft_time_get() - p->time), p->philo_number, s);
+	pthread_mutex_unlock(&p->test->print[0]);
 }
 
 void	ft_eat(details_t *p)
@@ -96,8 +94,9 @@ void	ft_eat(details_t *p)
 void *how_I_live(void *pp)
 {
 	details_t *p = (details_t *)pp;
-	while(p->test->meal[p->philo_number - 1] < p->test->must_eat)
+	while(p->test->meal[p->philo_number - 1]< p->test->must_eat)
 	{
+		//printf("\n%d\n", p->meal);
 		x_print("is thinking", p, 0);
 		ft_eat(p);
 		x_print("is sleeping", p, 0);
@@ -112,13 +111,14 @@ void	creat_thread_modulo(philo_t *a, details_t *p)
 
 	a->tread = (pthread_t *)malloc(sizeof(pthread_t) * a->philo);
 	x = -1;
+	a->time = ft_time_get();
 	while (++x < a->philo)
 	{
-		p[x].eat = ((p[x].philo_number = x + 1), 0);
+		p[x].philo_number = x + 1;
 		p[x].time = ((p[x].fork = a->fork), a->time);
 		p[x].test = (a);
-		p[x].print = a->print;
-		p[x].d = a->d;
+		a->meal[x] = 0;
+		p->test->last_meal[x] = ft_time_get();
 		if (x % 2 == 0)
 			if (pthread_create(&a->tread[x], NULL, how_I_live, (void *)&p[x]) != 0)
 				return ;
@@ -153,51 +153,50 @@ void ft_free(philo_t *a, details_t *p)
 	pthread_mutex_destroy(&a->print[0]);
 	free(a->fork);
 	free(a->print);
+	free(a->last_meal);
+	free(a->meal);
 	free(p);
 }
 
 void	philo(philo_t *a)
 {
 	details_t	*p;
-	int					x;
-	a->d = malloc(sizeof(int) * 1);
+	int			x;
 	a->fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * a->philo);
 	a->print = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * 1);
 	a->last_meal = malloc(sizeof(long int) * a->philo);
 	a->meal = malloc(sizeof(int) * a->philo);
 	p = (details_t *)malloc(sizeof(details_t) * a->philo);
-	a->d[0] = 1;
 	x = -1;
 	if (pthread_mutex_init(&a->print[0], NULL) != 0)
 			return ;
 	while (++x < a->philo)
 		if (pthread_mutex_init(&a->fork[x], NULL) != 0)
 			return ;
-	a->time = ft_time_get();
 	creat_thread_modulo(a, p);
 	x = 0;
-	ft_usleep(a->die);
+	//ft_usleep(a->die);
 	while (1)
 	{
 		if (x == a->philo - 1)
 		{
 			x = 0;
 		}
-		pthread_mutex_lock(&p->print[0]);
+		pthread_mutex_lock(&a->print[0]);
 		int lock1 = a->meal[x];
-		pthread_mutex_unlock(&p->print[0]);
+		pthread_mutex_unlock(&a->print[0]);
+		//printf("\n\n%d\n\n", lock1);
 		if(lock1 == a->must_eat)
 		{
-			ft_usleep(a->eat);
+			ft_usleep(a->die);
 			break;
 		}
-		pthread_mutex_lock(&p->print[0]);
-		int lock = ft_time_get() - a->last_meal[x];
-		pthread_mutex_unlock(&p->print[0]);
-		if ( lock> a->die)
+		pthread_mutex_lock(&a->print[0]);
+		long int lock = ft_time_get() - a->last_meal[x];
+		pthread_mutex_unlock(&a->print[0]);
+		if ( lock > a->die)
 		{
-			a->d = 0;
-			pthread_mutex_lock(&p->print[0]);
+			pthread_mutex_lock(&a->print[0]);
 			printf("%ld %d died\n",
 				(ft_time_get() - p[x].time), p[x].philo_number);
 				break;
@@ -209,7 +208,8 @@ void	philo(philo_t *a)
 
 int main(int ac, char **av)
 {
-	philo_t a;
+	philo_t *a;
+	a = (philo_t *)malloc(sizeof(philo_t) * 1);
 	int x = 0, y = 1;
 	if(ac == 5 || ac == 6)
 	{
@@ -229,10 +229,11 @@ int main(int ac, char **av)
 	        y++;
 	        x = 0;
 	    }
-		full_the_format(ac, av, &a);
-		if(a.philo <= 0)
+		full_the_format(ac, av, a);
+		if(a->philo <= 0)
 			return 0;
-		philo(&a);
+		philo(a);
 	}
+	free(a);
 	return 0;
 }
