@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/12 22:42:13 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/21 20:06:31 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/21 20:26:35 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ typedef struct s_details
 	long int		time;
 	long int		prnt_time;
 	philo_t			*test;
-	pthread_mutex_t	*fork;
+		pthread_mutex_t	*fork;
 	int *d;
 }details_t;
 

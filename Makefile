@@ -9,7 +9,7 @@ FLAGS = -Wall -Wextra -Werror
 all : $(NAME)
 
 $(NAME) : $(OBJ)
-	gcc $(FLAGS)  $< -o philo -g -fsanitize=thread
+	gcc $(FLAGS)  $< -o philo
 %.o : %.c
 	gcc $(FLAGS) -c $<
 

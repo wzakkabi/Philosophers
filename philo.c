@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 16:42:03 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/21 20:12:32 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/21 21:01:26 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,18 +91,19 @@ void	ft_eat(details_t *p)
 	}
 }
 
-void *how_I_live(void *pp)
+void	*how_i_live(void *pp)
 {
-	details_t *p = (details_t *)pp;
-	while(p->test->meal[p->philo_number - 1]< p->test->must_eat)
+	details_t	*p;
+
+	p = (details_t *)pp;
+	while (p->test->meal[p->philo_number - 1] < p->test->must_eat)
 	{
-		//printf("\n%d\n", p->meal);
 		x_print("is thinking", p, 0);
 		ft_eat(p);
 		x_print("is sleeping", p, 0);
 		ft_usleep(p->test->sleep);
 	}
-	return (void *)p;
+	return ((void *)p);
 }
 
 void	creat_thread_modulo(philo_t *a, details_t *p)
@@ -114,38 +115,38 @@ void	creat_thread_modulo(philo_t *a, details_t *p)
 	a->time = ft_time_get();
 	while (++x < a->philo)
 	{
-		p[x].philo_number = x + 1;
 		p[x].time = ((p[x].fork = a->fork), a->time);
 		p[x].test = (a);
-		a->meal[x] = 0;
+		a->meal[x] = ((p[x].philo_number = x + 1), 0);
 		p->test->last_meal[x] = ft_time_get();
 		if (x % 2 == 0)
-			if (pthread_create(&a->tread[x], NULL, how_I_live, (void *)&p[x]) != 0)
+			if (pthread_create(&a->tread[x], NULL,
+					how_i_live, (void *)&p[x]) != 0)
 				return ;
 		usleep(1);
 	}
-	ft_usleep(1);
-	x = -1;
+	x = ((ft_usleep(1)), -1);
 	while (++x < a->philo)
 	{
 		if (x % 2 == 1)
-			if (pthread_create(&a->tread[x], NULL, how_I_live, (void *)&p[x]) != 0)
+			if (pthread_create(&a->tread[x], NULL,
+					how_i_live, (void *)&p[x]) != 0)
 				return ;
 	}
 }
 
-void ft_free(philo_t *a, details_t *p)
+void	ft_free(philo_t *a, details_t *p)
 {
-	int x;
+	int	x;
 
 	x = 0;
-	while(x < a->philo)
+	while (x < a->philo)
 	{
 		pthread_detach(a->tread[x]);
 		x++;
 	}
 	x = 0;
-	while(x < a->philo)
+	while (x < a->philo)
 	{
 		pthread_mutex_destroy(&a->fork[x]);
 		x++;
@@ -155,18 +156,14 @@ void ft_free(philo_t *a, details_t *p)
 	free(a->print);
 	free(a->last_meal);
 	free(a->meal);
+	free(a->tread);
 	free(p);
+	free(a);
 }
 
-void	philo(philo_t *a)
+void	philo(philo_t *a, details_t	*p)
 {
-	details_t	*p;
 	int			x;
-	a->fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * a->philo);
-	a->print = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * 1);
-	a->last_meal = malloc(sizeof(long int) * a->philo);
-	a->meal = malloc(sizeof(int) * a->philo);
-	p = (details_t *)malloc(sizeof(details_t) * a->philo);
 	x = -1;
 	if (pthread_mutex_init(&a->print[0], NULL) != 0)
 			return ;
@@ -203,37 +200,54 @@ void	philo(philo_t *a)
 		}
 		x++;
 	}
-	ft_free(a, p);
 }
 
-int main(int ac, char **av)
+int check_arg(int ac, char **av)
 {
-	philo_t *a;
-	a = (philo_t *)malloc(sizeof(philo_t) * 1);
-	int x = 0, y = 1;
-	if(ac == 5 || ac == 6)
+	int	x;
+	int	y;
+
+	x = (y = 1, 0);
+	if (ac == 5 || ac == 6)
 	{
-	    while(av[y])
+	    while (av[y])
 	    {
-	        if(av[y][x] == '+')
+	        if (av[y][x] == '+')
 	                x++;
-	        while(av[y][x])
+	        while (av[y][x])
 	        {
-	            if(av[y][x] < '0' || av[y][x] > '9')
+	            if (av[y][x] < '0' || av[y][x] > '9')
 	            {
 	                printf("error\n");
-	                return 0;
+	                return (1);
 	            }
 	            x++;
 	        }
 	        y++;
 	        x = 0;
 	    }
+	}
+	return (0);
+}
+
+int	main(int ac, char **av)
+{
+	philo_t 	*a;
+	details_t	*p;
+
+	if (check_arg(ac, av) == 0)
+	{
+		a = (philo_t *)malloc(sizeof(philo_t) * 1);
 		full_the_format(ac, av, a);
 		if(a->philo <= 0)
 			return 0;
-		philo(a);
+		a->fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * a->philo);
+		a->print = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * 1);
+		a->last_meal = malloc(sizeof(long int) * a->philo);
+		a->meal = malloc(sizeof(int) * a->philo);
+		p = (details_t *)malloc(sizeof(details_t) * a->philo);
+		philo(a, p);
+		ft_free(a, p);
 	}
-	free(a);
-	return 0;
+	return (0);
 }
