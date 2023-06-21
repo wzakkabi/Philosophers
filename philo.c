@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 16:42:03 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/21 21:01:26 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:55:02 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,36 @@ void	ft_free(philo_t *a, details_t *p)
 	free(a);
 }
 
+
+void	check_die_or_not(philo_t *a, details_t *p, int lock1, long int lock)
+{
+	int	x;
+
+	x = 0;
+	while (1)
+	{
+		if (x == a->philo - 1)
+			x = 0;
+		pthread_mutex_lock(&a->print[0]);
+		lock1 = a->meal[x];
+		lock = ft_time_get() - a->last_meal[x];
+		pthread_mutex_unlock(&a->print[0]);
+		if (lock1 == a->must_eat)
+		{
+			ft_usleep(a->die);
+			break ;
+		}
+		if (lock > a->die)
+		{
+			pthread_mutex_lock(&a->print[0]);
+			printf("%ld %d died\n",
+				(ft_time_get() - p[x].time), p[x].philo_number);
+			break ;
+		}
+		x++;
+	}
+}
+
 void	philo(philo_t *a, details_t	*p)
 {
 	int			x;
@@ -171,35 +201,7 @@ void	philo(philo_t *a, details_t	*p)
 		if (pthread_mutex_init(&a->fork[x], NULL) != 0)
 			return ;
 	creat_thread_modulo(a, p);
-	x = 0;
-	//ft_usleep(a->die);
-	while (1)
-	{
-		if (x == a->philo - 1)
-		{
-			x = 0;
-		}
-		pthread_mutex_lock(&a->print[0]);
-		int lock1 = a->meal[x];
-		pthread_mutex_unlock(&a->print[0]);
-		//printf("\n\n%d\n\n", lock1);
-		if(lock1 == a->must_eat)
-		{
-			ft_usleep(a->die);
-			break;
-		}
-		pthread_mutex_lock(&a->print[0]);
-		long int lock = ft_time_get() - a->last_meal[x];
-		pthread_mutex_unlock(&a->print[0]);
-		if ( lock > a->die)
-		{
-			pthread_mutex_lock(&a->print[0]);
-			printf("%ld %d died\n",
-				(ft_time_get() - p[x].time), p[x].philo_number);
-				break;
-		}
-		x++;
-	}
+	check_die_or_not(a, p, 0, 0);
 }
 
 int check_arg(int ac, char **av)
@@ -232,15 +234,15 @@ int check_arg(int ac, char **av)
 
 int	main(int ac, char **av)
 {
-	philo_t 	*a;
+	philo_t		*a;
 	details_t	*p;
 
 	if (check_arg(ac, av) == 0)
 	{
 		a = (philo_t *)malloc(sizeof(philo_t) * 1);
 		full_the_format(ac, av, a);
-		if(a->philo <= 0)
-			return 0;
+		if (a->philo <= 0)
+			return (0);
 		a->fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * a->philo);
 		a->print = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * 1);
 		a->last_meal = malloc(sizeof(long int) * a->philo);
