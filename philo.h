@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/12 22:42:13 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/22 17:49:53 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/22 19:45:07 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,5 +60,6 @@ void		ft_free(t_philo *a, t_details *p);
 void		check_die(t_philo *a, t_details *p, int lock1, long int lock);
 void		philo(t_philo *a, t_details	*p);
 int			check_arg(int ac, char **av);
+int			ft_atoi(const char *str);
 
 #endif

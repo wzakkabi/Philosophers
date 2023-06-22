@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 18:07:16 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/22 18:26:54 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/22 19:31:15 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,13 +85,13 @@ void	check_die(t_philo *a, t_details *p, int lock1, long int lock)
 {
 	int	x;
 
-	x = ((ft_usleep(a->die)), -1);
+	x = (-1);
 	while (1)
 	{
-		if (++x == a->philo - 1)
+		if (x++ == a->philo - 1)
 			x = 0;
 		pthread_mutex_lock(&a->print[0]);
-		lock1 = a->meal[x];
+		lock1 = a->meal[0];
 		lock = ft_time_get() - a->last_meal[x];
 		pthread_mutex_unlock(&a->print[0]);
 		if (lock1 == a->must_eat)
