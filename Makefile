@@ -1,6 +1,6 @@
 NAME = philo
 
-SRC = philo.c
+SRC = philo.c main.c helper.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -9,7 +9,7 @@ FLAGS = -Wall -Wextra -Werror #-fsanitize=thread
 all : $(NAME)
 
 $(NAME) : $(OBJ)
-	gcc $(FLAGS)  $< -o philo
+	gcc $(FLAGS) $(SRC) -o $(NAME)
 %.o : %.c
 	gcc $(FLAGS) -c $<
 
