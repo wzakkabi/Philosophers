@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 18:07:06 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/22 18:14:38 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/22 18:28:24 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	full_the_format(int ac, char **av, t_philo *a)
 	a->eat = atoi(av[3]);
 	a->sleep = atoi(av[4]);
 	if (ac == 6)
-		a->must_eat = atoi(av[5]);
+		a->must_eat = atoi(av[5]) + 2;
 	else
 		a->must_eat = 2147483647;
 }

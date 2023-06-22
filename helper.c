@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 18:07:16 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/22 18:16:04 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/22 18:26:54 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,6 @@ void	check_die(t_philo *a, t_details *p, int lock1, long int lock)
 		pthread_mutex_unlock(&a->print[0]);
 		if (lock1 == a->must_eat)
 		{
-			ft_usleep(a->die);
 			break ;
 		}
 		if (lock > a->die)
