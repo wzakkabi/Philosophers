@@ -6,7 +6,7 @@
 /*   By: wzakkabi <wzakkabi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/12 22:42:13 by wzakkabi          #+#    #+#             */
-/*   Updated: 2023/06/21 20:26:35 by wzakkabi         ###   ########.fr       */
+/*   Updated: 2023/06/22 17:49:53 by wzakkabi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <pthread.h>
 # include <stdlib.h>
 
-typedef struct s_details details_t;
+typedef struct s_details	t_details;
 typedef struct s_philo
 {
 	int				philo;
@@ -32,23 +32,33 @@ typedef struct s_philo
 	int				die_or_not;
 	long int		time;
 	long int		*last_meal;
-	details_t		*dtls;
+	t_details		*dtls;
 	pthread_t		*tread;
 	pthread_mutex_t	*fork;
-	pthread_mutex_t *print;
+	pthread_mutex_t	*print;
 	int				*meal;
-}philo_t;
+}t_philo;
 
 typedef struct s_details
 {
 	int				philo_number;
 	long int		time;
 	long int		prnt_time;
-	philo_t			*test;
-		pthread_mutex_t	*fork;
-	int *d;
-}details_t;
+	t_philo			*test;
+	pthread_mutex_t	*fork;
+	int				*d;
+}t_details;
 
-//void	ft_eat(struct details_t *p);
+long int	ft_time_get(void);
+void		ft_usleep(int t);
+void		full_the_format(int ac, char **av, t_philo *a);
+void		x_print(char *s, t_details *p, int i);
+void		ft_eat(t_details *p);
+void		*how_i_live(void *pp);
+void		creat_thread_modulo(t_philo *a, t_details *p);
+void		ft_free(t_philo *a, t_details *p);
+void		check_die(t_philo *a, t_details *p, int lock1, long int lock);
+void		philo(t_philo *a, t_details	*p);
+int			check_arg(int ac, char **av);
 
 #endif

@@ -4,7 +4,7 @@ SRC = philo.c
 
 OBJ = $(SRC:.c=.o)
 
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror #-fsanitize=thread
 
 all : $(NAME)
 
